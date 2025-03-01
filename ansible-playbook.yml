@@ -1,0 +1,30 @@
+---
+- name: Deploy Scientific Calculator Application
+  hosts: servers
+  become: true
+  tasks:
+
+    - name: Install Docker
+      apt:
+        name: docker.io
+        state: present
+
+    - name: Add user to Docker group
+      user:
+        name: "{{ ansible_user }}"
+        groups: docker
+        append: yes
+
+    - name: Pull Docker image from Docker Hub
+      docker_image:
+        name: shubhamsharma1975/scientific-calculator
+        source: pull
+
+    - name: Run Scientific Calculator Container
+      docker_container:
+        name: scientific-calculator
+        image: shubhamsharma1975/scientific-calculator
+        state: started
+        restart_policy: always
+        ports:
+          - "8080:8080"
